@@ -1,4 +1,4 @@
-.PHONY: all clean mk_objs mk_static install
+.PHONY: all clean mk_objs mk_static install test coverage
 
 LIB_NAME := Test_1
 
@@ -12,9 +12,11 @@ LIB_DIR := $(CUR_DIR)/libs
 # LIB_SHARED := $(LIB_DIR)/shared
 LIB_STATIC := $(LIB_DIR)/static
 
-INC_FLAGS := -I $(INC_DIR)
+INC_FLAGS := -I $(INC_DIR) -I /usr/include/gtest
+# CFLAGS := -Wall -g --coverage
+LDFLAGS := --coverage
 
-CC := gcc
+CC := g++
 
 mk_objs:
 	$(CC) -c $(CUR_DIR)/main.c -o $(OBJ_DIR)/main.o $(INC_FLAGS)
@@ -27,8 +29,16 @@ install:
 	cp -f $(LIB_STATIC)/lib$(LIB_NAME).a /usr/lib
 
 all: mk_objs mk_static 
-	$(CC)   $(OBJ_DIR)/main.o  -L$(LIB_STATIC) -l$(LIB_NAME) -o $(BIN_DIR)/use_static_lib
+	$(CC)   $(OBJ_DIR)/main.o  -L$(LIB_STATIC) -l$(LIB_NAME) -o $(BIN_DIR)/use_static_lib -lgtest -lgtest_main -lpthread $(LDFLAGS)
 clean:
 	rm -rf $(OBJ_DIR)/*
 	rm -rf $(LIB_STATIC)/lib$(LIB_NAME).a
 	rm -rf $(BIN_DIR)/use_static_lib
+	rm -rf $(CUR_DIR)/*.gcda $(CUR_DIR)/*.gcno $(CUR_DIR)/*.info $(CUR_DIR)/coverage
+
+test: all
+	$(BIN_DIR)/use_static_lib
+
+coverage: test
+	lcov --capture --directory . --output-file coverage.info
+	genhtml coverage.info --output-directory coverage
