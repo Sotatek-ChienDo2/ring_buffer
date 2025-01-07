@@ -9,6 +9,7 @@ typedef struct {
     size_t tail_index;
     size_t head_index;
     size_t buffer_size;
+    int full_size;
     int* buffer;
 } ring_buffer_t;
 

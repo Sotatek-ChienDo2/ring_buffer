@@ -17,6 +17,7 @@ int ringbuffer_init(ring_buffer_t *rb, size_t buffer_size)
     rb->buffer_size = buffer_size;
     rb->head_index = 0;
     rb->tail_index = 0;
+    rb->full_size = 0;
     return 0;
 }
 
@@ -29,6 +30,7 @@ int ringbuffer_add(ring_buffer_t *rb, int data)
 
     rb->buffer[rb->tail_index] = data;
     rb->tail_index = (rb->tail_index + 1) % rb->buffer_size;
+    rb->full_size++;
     return 0;
 }
 
@@ -41,17 +43,18 @@ int ringbuffer_remove(ring_buffer_t *rb, int* data)
 
     *data = rb->buffer[rb->head_index];
     rb->head_index = (rb->head_index + 1) % rb->buffer_size;
+    rb->full_size--;
     return 0; 
 }
 
 bool ringbuffer_is_empty(ring_buffer_t *rb)
 {
-    return rb->head_index == rb->tail_index;
+    return rb->full_size == 0;
 }
 
 bool ringbuffer_is_full(ring_buffer_t *rb)
 {
-    return (rb->tail_index + 1) % rb->buffer_size == rb->head_index;
+    return rb->full_size == rb->buffer_size;
 }
 
 int ringbuffer_size(ring_buffer_t *rb)
@@ -70,4 +73,5 @@ void ringbuffer_destroy(ring_buffer_t *rb)
     rb->buffer_size = 0;
     rb->head_index = 0;
     rb->tail_index = 0;
+    rb->full_size = 0;
 }
