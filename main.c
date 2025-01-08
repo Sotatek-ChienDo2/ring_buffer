@@ -2,6 +2,13 @@
 #include"inc/ring_buffer.h"
 #include<gtest/gtest.h>
 
+TEST(RingBufferTest, InitZeroSize)
+{
+    ring_buffer_t rb;
+
+    ASSERT_EQ(ringbuffer_init(&rb, 0), -1);
+}
+
 TEST(RingBufferTest, InitAndBasicOperations)
 {
     ring_buffer_t rb;

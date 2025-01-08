@@ -43,4 +43,5 @@ test: all
 
 coverage: test
 	lcov --capture --directory . --output-file coverage.info
-	genhtml coverage.info --output-directory coverage
+	lcov --remove coverage.info '/usr/*' '*/gtest/*' --output-file coverage_filtered.info
+	genhtml coverage_filtered.info --output-directory coverage
