@@ -1,6 +1,6 @@
 .PHONY: all clean mk_objs mk_static install test coverage
 
-LIB_NAME := Test_1
+LIB_NAME := ring_buffer-master
 
 CUR_DIR := .
 BIN_DIR := $(CUR_DIR)/bin
@@ -13,14 +13,15 @@ LIB_DIR := $(CUR_DIR)/libs
 LIB_STATIC := $(LIB_DIR)/static
 
 INC_FLAGS := -I $(INC_DIR) -I /usr/include/gtest
-# CFLAGS := -Wall -g --coverage
+CFLAGS := -Wall -g --coverage
 LDFLAGS := --coverage
 
 CC := g++
 
 mk_objs:
-	$(CC) -c $(CUR_DIR)/main.c -o $(OBJ_DIR)/main.o $(INC_FLAGS)
-	$(CC) -c $(SRC_DIR)/ring_buffer.c -o $(OBJ_DIR)/ring_buffer.o $(INC_FLAGS)
+	mkdir -p $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) $(LIB_STATIC)
+	$(CC) -c $(CUR_DIR)/main.c -o $(OBJ_DIR)/main.o $(INC_FLAGS) $(CFLAGS)
+	$(CC) -c $(SRC_DIR)/ring_buffer.c -o $(OBJ_DIR)/ring_buffer.o $(INC_FLAGS) $(CFLAGS)
 
 mk_static:
 	ar rcs $(LIB_STATIC)/lib$(LIB_NAME).a $(OBJ_DIR)/ring_buffer.o
@@ -34,6 +35,7 @@ clean:
 	rm -rf $(OBJ_DIR)/*
 	rm -rf $(LIB_STATIC)/lib$(LIB_NAME).a
 	rm -rf $(BIN_DIR)/use_static_lib
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) $(LIB_STATIC)
 	rm -rf $(CUR_DIR)/*.gcda $(CUR_DIR)/*.gcno $(CUR_DIR)/*.info $(CUR_DIR)/coverage
 
 test: all
