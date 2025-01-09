@@ -7,6 +7,10 @@ TEST(RingBufferTest, InitZeroSize)
     ring_buffer_t rb;
 
     ASSERT_EQ(ringbuffer_init(&rb, 0), -1);
+
+    int result = ringbuffer_init(&rb, SIZE_MAX);
+    ASSERT_EQ(result, -1);
+
 }
 
 TEST(RingBufferTest, InitAndBasicOperations)
@@ -84,6 +88,8 @@ TEST(RingBufferTest, AddAndRemove)
     // Test add and remove
     ASSERT_EQ(ringbuffer_add(&rb, 10), 0);
     ASSERT_EQ(ringbuffer_add(&rb, 20), 0);
+    ASSERT_EQ(ringbuffer_size(&rb), 2);
+
     int data;
     ASSERT_EQ(ringbuffer_remove(&rb, &data), 0);
     ASSERT_EQ(data, 10);
